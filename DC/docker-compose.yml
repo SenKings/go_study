@@ -1,0 +1,40 @@
+version: '3.1'
+
+services:
+
+  mysql:
+    image: mysql:5.7.25
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: "go_study" #数据库名
+    volumes:
+      - ./db-data:/var/lib/mysql #数据卷
+#      - ./initdb:/docker-entrypoint-initdb.d/
+    networks:
+      - backend
+      
+  go-app:
+    image: goapp:latest
+    environment:
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_HOST: mysql
+    ports:
+      - "8090:8090"
+    depends_on:
+      - mysql
+#     restart: on-failure
+    networks:  
+      - backend  
+      
+volumes:  
+  db-data:  
+  
+networks:  
+  backend:  
+    driver: bridge
